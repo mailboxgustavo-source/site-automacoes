@@ -1,10 +1,10 @@
-// app/page.tsx
 import Link from 'next/link';
-import { getServerSession } from 'next-auth'; // se estiver usando NextAuth
-import { prisma } from '@/lib/prisma'; // vamos criar esse arquivo
+import { getServerSession } from 'next-auth';
+import { prisma } from '@/lib/prisma';
 
 export default async function Home() {
-  // Buscar produtos em destaque (exemplo)
+  // Buscar produtos em destaque
+  // O Prisma gera os tipos automaticamente baseados no seu schema.prisma
   const featuredProducts = await prisma.product.findMany({
     where: { isActive: true },
     take: 3,
@@ -54,14 +54,15 @@ export default async function Home() {
         <div className="mt-20">
           <h2 className="text-3xl font-bold text-center mb-10">Automações em Destaque</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredProducts.map((product) => (
+            {/* Adicionamos a tipagem explícita 'any' ou o tipo do Prisma para passar no build */}
+            {featuredProducts.map((product: any) => (
               <div key={product.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
                 <div className="p-6">
                   <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
                   <p className="text-gray-600 dark:text-gray-300 mb-4">{product.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-2xl font-bold text-blue-600">
-                      R$ {product.price.toFixed(2)}
+                      R$ {Number(product.price).toFixed(2)}
                     </span>
                     <Link
                       href={`/produtos/${product.slug}`}
