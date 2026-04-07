@@ -4,10 +4,8 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
-// ... restante dos seus models (User, Product, etc)
-  
-
 
 model User {
   id        String   @id @default(cuid())
