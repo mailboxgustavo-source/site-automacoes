@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+// ... restante dos seus models (User, Product, etc)
+  
+
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  purchases Purchase[]
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  name        String
+  description String
+  price       Float
+  type        ProductType @default(DIGITAL)
+  fileKey     String?
+  downloadUrl String?
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  purchases   Purchase[]
+}
+
+model Purchase {
+  id         String        @id @default(cuid())
+  userId     String
+  productId  String
+  status     PurchaseStatus @default(PENDING)
+  paymentId  String?
+  accessUrl  String?
+  expiresAt  DateTime?
+  createdAt  DateTime      @default(now())
+  user       User          @relation(fields: [userId], references: [id])
+  product    Product       @relation(fields: [productId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum ProductType {
+  DIGITAL
+  AUTOMATION
+  SERVICE
+}
+
+enum PurchaseStatus {
+  PENDING
+  PAID
+  DELIVERED
+  CANCELLED
+}
